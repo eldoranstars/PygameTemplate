@@ -23,3 +23,18 @@ class Settings():
         # Параметры аудио
         # self.intro_sound = pygame.mixer.Sound(resource_path('media/intro.mp3'))
         # self.outro_sound = pygame.mixer.Sound(resource_path('media/outro.mp3'))
+        # Динамические параметры игры
+        self.new_game()
+
+    # Сбросить параметры для новой игры
+    def new_game(self):
+        # Титры
+        self.first_line = 0
+        self.final_text = []
+        self.messages = ['Producer:', 'eldoranstars', '', \
+            'Project Manager:', 'eldoranstars', '', \
+            'Game Developer:', 'eldoranstars', '', \
+            'Game Designer:', 'eldoranstars', '', \
+            'Sound Designer:', 'eldoranstars', '', \
+            'Quality Assurance:', 'eldoranstars', '', \
+            'Lead DevOps:', 'eldoranstars']

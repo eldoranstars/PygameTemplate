@@ -56,6 +56,8 @@ def check_events(stats, joystick_zero, joystick_one):
                     pygame.display.toggle_fullscreen()
                 if event.key == pygame.K_p:
                     stats.game_active = True
+                    if stats.final_active:
+                        new_game(stats)
             if event.type == pygame.JOYBUTTONDOWN:
                 if joystick.get_button(6) == 1:
                     pygame.quit()
@@ -71,6 +73,11 @@ def check_events(stats, joystick_zero, joystick_one):
                     pygame.display.toggle_fullscreen()
                 if joystick.get_button(7) == 1:
                     stats.game_active = True
+
+# запуск новой игры
+def new_game(stats):
+    settings.new_game()
+    stats.final_active = False
 
 # pygame.key.get_pressed() используется для непрерывнной реакции на зажатую клавишу
 def update_player(stats, joystick):
@@ -97,10 +104,26 @@ def update_player(stats, joystick):
         if joystick.get_axis(5) > 0.2:
             pass
 
+# Обновить расположение объектов на экране.
+def update_final_text():
+    for message in settings.final_text:
+        message.scroll_text()
+
+# Создание объектов в списке
+def append_messages():
+    for message in settings.messages:
+        settings.first_line += 33
+        new_message = Text(screen, message, screen.rect.centerx, screen.rect.bottom + settings.first_line)
+        settings.final_text.append(new_message)
+    settings.messages.clear()
+
 # Вывод изображений на экран.
 def blit_screen(stats):
     screen.blitme()
-    if not stats.game_active:
+    if not stats.game_active and not stats.final_active::
         for button in buttons:
             button.blitme()
+    if stats.final_active:
+        for message in settings.final_text:
+            message.blitme()
     pygame.display.update()

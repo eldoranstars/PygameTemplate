@@ -19,6 +19,9 @@ class Text():
         self.score_msg = self.msg.format(score)
         self.surface = self.font.render(self.score_msg, True, self.text_color)
 
+    def scroll_text(self):
+        self.rect.centery -= 1
+
     # Вывод изображения на экран
     def blitme(self):
         self.screen.surface.blit(self.surface, self.rect)
