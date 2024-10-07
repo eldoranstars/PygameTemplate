@@ -10,12 +10,10 @@ def resource_path(relative_path):
 class Settings():
     def __init__(self):
         pygame.init()
-        # Параметры экрана
+        # Экран
         self.screen_width = 1920
         self.screen_height = 1080
         self.screen_color = (100, 100, 100)
-        self.midline_width = self.screen_height / 100
-        self.midline_height = self.screen_height
         # Параметры изображений
         # self.road_surface = pygame.image.load(resource_path('media/road.jpg'))
         self.screen_surface = pygame.display.set_mode((self.screen_width, self.screen_height), pygame.SCALED)

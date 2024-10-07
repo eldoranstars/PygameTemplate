@@ -9,7 +9,7 @@ from text import Text
 
 settings = Settings()
 screen = Screen(settings)
-game_start = Text(screen, "START", screen.rect.centerx, screen.rect.centery)
+game_start = Text(screen, "START", screen.rect.centerx, screen.rect.centery, (0, 0, 0))
 game_settings = Text(screen, "SETTINGS", screen.rect.centerx, screen.rect.centery + 33)
 game_board = Text(screen, "LEADERBOARD", screen.rect.centerx, screen.rect.centery + 66)
 game_quit = Text(screen, "EXIT", screen.rect.centerx, screen.rect.centery + 99)
@@ -35,23 +35,30 @@ def collision_test(object, wm, hm):
 # Отслеживание нажатий клавиатуры и джойстика.
 def check_events(stats, joystick_zero, joystick_one):
     if stats.game_screen == "main_menu":
-        print(pygame.key.get_pressed())
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
+                    # меняем активную кнопку в списке
                     buttons[0], buttons[1], buttons[2], buttons[3] = buttons[3], buttons[0], buttons[1], buttons[2]
-                    buttons[0].text_color = (200, 0, 0)
+                    # анимация прокручивания
                     buttons[0].rect.bottom = screen.rect.centery
                     buttons[1].rect.bottom = screen.rect.centery + 33
                     buttons[2].rect.bottom = screen.rect.centery + 66
                     buttons[3].rect.bottom = screen.rect.centery + 99
+                    for button in buttons:
+                        button.update_text()
+                    buttons[0].update_text((0, 0, 0))
                 if event.key == pygame.K_DOWN:
+                    # меняем активную кнопку в списке
                     buttons[0], buttons[1], buttons[2], buttons[3] = buttons[1], buttons[2], buttons[3], buttons[0]
-                    buttons[0].text_color = (200, 0, 0)
+                    # анимация прокручивания
                     buttons[0].rect.bottom = screen.rect.centery
                     buttons[1].rect.bottom = screen.rect.centery + 33
                     buttons[2].rect.bottom = screen.rect.centery + 66
                     buttons[3].rect.bottom = screen.rect.centery + 99
+                    for button in buttons:
+                        button.update_text()
+                    buttons[0].update_text((0, 0, 0))
                 if event.key == pygame.K_SPACE:
                     if buttons[0].msg == "START":
                         stats.game_screen = "game_start"
