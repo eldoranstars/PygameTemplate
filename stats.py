@@ -1,3 +1,6 @@
+# значения game_screen могуть быть:
+# [ main_menu, game_start, game_settings, leaderboard ]
+
 class GameStats():
     def __init__(self):
         self.game_screen = "main_menu"

@@ -11,9 +11,12 @@ settings = Settings()
 screen = Screen(settings)
 game_start = Text(screen, "START", screen.rect.centerx, screen.rect.centery, (0, 0, 0))
 game_settings = Text(screen, "SETTINGS", screen.rect.centerx, screen.rect.centery + 33)
-game_board = Text(screen, "LEADERBOARD", screen.rect.centerx, screen.rect.centery + 66)
+leaderboard = Text(screen, "LEADERBOARD", screen.rect.centerx, screen.rect.centery + 66)
 game_quit = Text(screen, "EXIT", screen.rect.centerx, screen.rect.centery + 99)
-buttons = [game_start, game_settings, game_board, game_quit]
+menu_buttons = [game_start, game_settings, leaderboard, game_quit]
+game_music = Text(screen, "MUSIC: {:,}", screen.rect.centerx, screen.rect.centery, (0, 0, 0))
+game_fullscreen = Text(screen, "FULLSCREEN: {:,}", screen.rect.centerx, screen.rect.centery + 33)
+settings_buttons = [game_start, game_settings, leaderboard, game_quit]
 
 # Получаем пиксельную маску для обработки коллизий.
 def overlap(player, enemy):
@@ -32,41 +35,37 @@ def collision(self, rect, wm, hm):
 def collision_test(object, wm, hm):
     screen.surface.blit(pygame.Surface((collision(object.rect, wm, hm).width,collision(object.rect, wm, hm).height)), collision(object.rect, wm, hm))
 
+def active_button_animation():
+    # анимация прокручивания кнопок в меню
+    menu_buttons[0].rect.bottom = screen.rect.centery
+    menu_buttons[1].rect.bottom = screen.rect.centery + 33
+    menu_buttons[2].rect.bottom = screen.rect.centery + 66
+    menu_buttons[3].rect.bottom = screen.rect.centery + 99
+    for button in menu_buttons:
+        button.update_text()
+    menu_buttons[0].update_text((0, 0, 0))
+
 # Отслеживание нажатий клавиатуры и джойстика.
 def check_events(stats, joystick_zero, joystick_one):
     if stats.game_screen == "main_menu":
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    # меняем активную кнопку в списке
-                    buttons[0], buttons[1], buttons[2], buttons[3] = buttons[3], buttons[0], buttons[1], buttons[2]
-                    # анимация прокручивания
-                    buttons[0].rect.bottom = screen.rect.centery
-                    buttons[1].rect.bottom = screen.rect.centery + 33
-                    buttons[2].rect.bottom = screen.rect.centery + 66
-                    buttons[3].rect.bottom = screen.rect.centery + 99
-                    for button in buttons:
-                        button.update_text()
-                    buttons[0].update_text((0, 0, 0))
+                    # меняем активную кнопку в списке и прокручиваем анимацию
+                    menu_buttons[0], menu_buttons[1], menu_buttons[2], menu_buttons[3] = menu_buttons[3], menu_buttons[0], menu_buttons[1], menu_buttons[2]
+                    active_button_animation()
                 if event.key == pygame.K_DOWN:
-                    # меняем активную кнопку в списке
-                    buttons[0], buttons[1], buttons[2], buttons[3] = buttons[1], buttons[2], buttons[3], buttons[0]
-                    # анимация прокручивания
-                    buttons[0].rect.bottom = screen.rect.centery
-                    buttons[1].rect.bottom = screen.rect.centery + 33
-                    buttons[2].rect.bottom = screen.rect.centery + 66
-                    buttons[3].rect.bottom = screen.rect.centery + 99
-                    for button in buttons:
-                        button.update_text()
-                    buttons[0].update_text((0, 0, 0))
+                    # меняем активную кнопку в списке и прокручиваем анимацию
+                    menu_buttons[0], menu_buttons[1], menu_buttons[2], menu_buttons[3] = menu_buttons[1], menu_buttons[2], menu_buttons[3], menu_buttons[0]
+                    active_button_animation()
                 if event.key == pygame.K_SPACE:
-                    if buttons[0].msg == "START":
+                    if menu_buttons[0].msg == "START":
                         stats.game_screen = "game_start"
-                    if buttons[0].msg == "SETTINGS":
+                    if menu_buttons[0].msg == "SETTINGS":
                         stats.game_screen = "game_settings"
-                    if buttons[0].msg == "LEADERBOARD":
-                        stats.game_screen = "game_board"
-                    if buttons[0].msg == "EXIT":
+                    if menu_buttons[0].msg == "LEADERBOARD":
+                        stats.game_screen = "leaderboard"
+                    if menu_buttons[0].msg == "EXIT":
                         pygame.quit()
                         sys.exit()
     if not stats.game_screen == "main_menu":
@@ -94,21 +93,21 @@ def check_events(stats, joystick_zero, joystick_one):
     #                 stats.game_active = True
     #                 if stats.final_active:
     #                     new_game(stats)
-            # if event.type == pygame.JOYBUTTONDOWN:
-            #     if joystick.get_button(6) == 1:
-            #         pygame.quit()
-            #         sys.exit()
-            #     if joystick.get_button(5) == 1:
-            #         if stats.music_active:
-            #             stats.music_active = False
-            #             pygame.mixer.pause()
-            #         else:
-            #             stats.music_active = True
-            #             pygame.mixer.unpause()
-            #     if joystick.get_button(4) == 1:
-            #         pygame.display.toggle_fullscreen()
-            #     if joystick.get_button(7) == 1:
-            #         stats.game_active = True
+    #         if event.type == pygame.JOYBUTTONDOWN:
+    #             if joystick.get_button(6) == 1:
+    #                 pygame.quit()
+    #                 sys.exit()
+    #             if joystick.get_button(5) == 1:
+    #                 if stats.music_active:
+    #                     stats.music_active = False
+    #                     pygame.mixer.pause()
+    #                 else:
+    #                     stats.music_active = True
+    #                     pygame.mixer.unpause()
+    #             if joystick.get_button(4) == 1:
+    #                 pygame.display.toggle_fullscreen()
+    #             if joystick.get_button(7) == 1:
+    #                 stats.game_active = True
 
 # запуск новой игры
 def new_game(stats):
@@ -156,8 +155,8 @@ def append_messages():
 # Вывод изображений на экран.
 def blit_screen(stats):
     screen.blitme()
-    if not stats.final_active and not stats.game_active:
-        for button in buttons:
+    if stats.game_screen == "main_menu":
+        for button in menu_buttons:
             button.blitme()
     if stats.final_active:
         for message in settings.final_text:
